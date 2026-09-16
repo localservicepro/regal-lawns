@@ -7,7 +7,7 @@ SEO strategy document dated 10 September 2026. No framework, no build dependenci
 
 | URL | Target keyword | Notes |
 |---|---|---|
-| `/` | lawn mowing deception bay | Exact H1, title and description from the strategy doc. LocalBusiness + FAQPage schema. |
+| `/` | lawn mowing deception bay | Exact H1, title and description from the strategy doc. LocalBusiness + FAQPage (12 Q&As) schema, speakable summary, recent-work gallery, at-a-glance facts, service-match table, lawn care guide. |
 | `/services/` | — | Hub page linking the six service pages |
 | `/services/lawn-mowing/` | lawn mowing redcliffe | Service + FAQPage + Breadcrumb schema |
 | `/services/acreage-mowing/` | acreage mowing brisbane | " |
@@ -95,6 +95,7 @@ Search the built HTML for `class="todo"` / `todo-block`. Each one is a fact the 
 2. **Opening hours** (contact page; also add `openingHoursSpecification` to the LocalBusiness schema in `build.py`)
 3. **Google Business Profile link / review link** (contact page; also add `sameAs` in the schema)
 4. **Customer review text** (homepage "What customers say" block)
+4a. **Recent work photos**: the homepage gallery uses six stock photos with service-type captions; swap in real job photos and suburbs
 5. **Typical lawn mowing price range** (homepage FAQ answer 1)
 6. **NDIS**: whether Regal accepts NDIS participants (homepage FAQ answer 6)
 7. **About page facts**: years in business, Ben Butler's background, team size, insurance and licences

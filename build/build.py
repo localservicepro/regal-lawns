@@ -404,6 +404,7 @@ def local_business(full=True):
         },
         "geo": {"@type": "GeoCoordinates", "latitude": BIZ["lat"], "longitude": BIZ["lng"]},
         "areaServed": [{"@type": "Place", "name": f"{s}, QLD"} for s in SUBURBS],
+        "knowsAbout": ["Lawn mowing", "Acreage mowing", "Garden maintenance", "Hedge trimming", "Lawn treatments", "Weed control", "Tree trimming", "Buffalo lawns", "Couch lawns"],
         # "openingHoursSpecification": TODO — opening hours were not supplied.
         # "sameAs": TODO — Google Business Profile URL was not supplied.
     }
@@ -517,6 +518,36 @@ HOME_FAQ = [
 ]
 
 
+
+# Question-phrased lawn care guide for answer engines. Merged into the FAQPage
+# schema with HOME_FAQ. General Brisbane/Moreton Bay lawn knowledge, no business
+# claims beyond what the strategy doc supports.
+HOME_GUIDE = [
+    ("When is the best time to mow a lawn in Brisbane?",
+     "Early morning or late afternoon, once the dew has dried and before the heat of the day. In Moreton Bay's summer, mowing every 2 weeks keeps couch and buffalo lawns healthy; in winter every 3 to 4 weeks is enough. Never remove more than a third of the leaf in one cut."),
+    ("What grass types are common in Deception Bay and Moreton Bay?",
+     "Most lawns in Deception Bay, North Lakes and the Redcliffe peninsula are Sir Walter or Sapphire buffalo, green couch or kikuyu, with zoysia appearing in newer estates around Mango Hill and Burpengary East. Buffalo suits shade and is mowed at 40 to 60 mm; couch prefers full sun and is mowed shorter at 20 to 30 mm."),
+    ("How do I get an accurate lawn mowing quote?",
+     "Give the property address or suburb, roughly how big the lawn is (a standard suburban block is 400 to 800 m²), how long the grass currently is, and whether you want a one-off cut or a regular schedule. A photo helps. Regal Lawns And Gardens quotes are free and confirmed before any work starts."),
+    ("Is lawn mowing cheaper on a regular schedule than a one-off?",
+     "Yes, per visit. A lawn that is cut every 2 to 4 weeks is faster to mow and easier to finish cleanly than one left for months, so regular clients across our 22 suburbs pay less per cut than a one-off overgrown job, which is priced on the extra time it takes."),
+    ("What is the difference between lawn mowing and lawn care?",
+     "Lawn mowing is cutting, edging and tidying the grass. Lawn care covers the health of the turf: weed control, fertilising, pest treatment and advice on watering and mowing height. Regal offers both, so a weedy or patchy lawn in Morayfield or North Lakes can be treated and mowed by the same crew."),
+    ("Which suburbs near Deception Bay do you travel to for garden maintenance?",
+     "All 22 of our service suburbs: Deception Bay, Rothwell, Kippa-Ring, Redcliffe, Margate, Clontarf, Woody Point, Newport, North Lakes, Mango Hill, Murrumba Downs, Kallangur, Dakabin, Narangba, Burpengary, Burpengary East, Morayfield, Caboolture, Strathpine, Lawnton, Bray Park and Brendale."),
+]
+
+# Symptom -> service table (quotable by answer engines)
+SERVICE_MATCH = [
+    ("Grass is long, edges are messy, paths need a blow-down", "lawn-mowing", "Every 2 weeks in summer, every 3 to 4 weeks in winter"),
+    ("A lifestyle block or paddock over a quarter acre has got away", "acreage-mowing", "Every 3 to 6 weeks in the growing season"),
+    ("Garden beds are full of weeds, shrubs need pruning, mulch is thin", "garden-maintenance", "Every 4 to 8 weeks"),
+    ("Hedges have lost their shape or grown past the fence line", "hedge-trimming", "Every 6 to 8 weeks from September to April"),
+    ("Lawn is patchy, thin, or full of bindii, clover or nutgrass", "lawn-treatments-weed-control", "Seasonal: spring feed, late-winter bindii treatment"),
+    ("Branches over the roof, fence or driveway, or storm damage", "tree-trimming", "Before storm season, November to March"),
+]
+
+
 def faq_html(faqs):
     items = "".join(f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in faqs)
     return f'<div class="faq">{items}</div>'
@@ -548,6 +579,10 @@ def build_home():
         </div>
       </article>""" for s in SERVICES)
 
+    match_rows = "".join(
+        f'<tr><td>{prob}</td><td><a href="{service_url(SERVICE_BY_SLUG[slug])}">{SERVICE_BY_SLUG[slug]["nav"]}</a></td><td>{freq}</td></tr>'
+        for prob, slug, freq in SERVICE_MATCH)
+    guide_items = "".join(f'<article class="guide__item"><h3>{q}</h3><p>{a}</p></article>' for q, a in HOME_GUIDE)
     body = f"""
 <section class="hero">
   {img('home-hero', 'Lawn mowing in Deception Bay: freshly cut green lawn with a push mower', cls='hero__bg', w=1920, h=1080, eager=True, sizes='100vw')}
@@ -617,7 +652,64 @@ def build_home():
   </div>
 </section>
 
-<section class="section section--alt">
+
+<section class="section section--alt" id="recent-work">
+  <div class="container">
+    <span class="eyebrow">Recent work</span>
+    <h2>Lawns and gardens around Moreton Bay</h2>
+    <p class="lede">A look at the kind of work we do every week across Deception Bay, the Redcliffe peninsula, North Lakes and the Caboolture corridor.</p>
+    {TODO('The six gallery images below are stock photos. Replace them with real before-and-after job photos and add the suburb and service to each caption.', inline=False)}
+    <div class="gallery">
+      <figure>{img('lawn-mowing-2', 'Recent work: residential lawn mowing on the Redcliffe peninsula', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Residential lawn mowing</strong><span>Redcliffe peninsula</span></figcaption></figure>
+      <figure>{img('hedge-2', 'Recent work: hedge trimming and shaping in North Lakes', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Hedge trimming and shaping</strong><span>North Lakes and Mango Hill</span></figcaption></figure>
+      <figure>{img('acreage-2', 'Recent work: acreage mowing and slashing in Narangba', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Acreage mowing and slashing</strong><span>Narangba and Burpengary East</span></figcaption></figure>
+      <figure>{img('garden-2', 'Recent work: garden bed maintenance and mulching in Kallangur', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Garden bed maintenance</strong><span>Kallangur and Murrumba Downs</span></figcaption></figure>
+      <figure>{img('treatments-2', 'Recent work: lawn treatment and weed control in Morayfield', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Lawn treatment and weed control</strong><span>Morayfield and Caboolture</span></figcaption></figure>
+      <figure>{img('tree-2', 'Recent work: tree trimming and branch removal in Strathpine', w=800, h=600, sizes='(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw')}<figcaption><strong>Tree trimming and branch removal</strong><span>Strathpine and Brendale</span></figcaption></figure>
+    </div>
+    <p style="margin-top:22px"><a class="btn btn--outline" href="/services/">See all six services {ICON['arrow']}</a></p>
+  </div>
+</section>
+
+<section class="section" id="at-a-glance">
+  <div class="container">
+    <div class="glance">
+      <div class="glance__summary">
+        <span class="eyebrow">At a glance</span>
+        <h2>Regal Lawns And Gardens in one paragraph</h2>
+        <p class="glance__text">Regal Lawns And Gardens PTY LTD is a lawn mowing and garden maintenance business based in Deception Bay, Queensland 4508, on Brisbane's northside. It provides lawn mowing, acreage mowing and slashing, garden maintenance, hedge trimming, lawn treatments and weed control, and tree trimming for residential, acreage and commercial properties across 22 suburbs of the Moreton Bay region, from Caboolture and Burpengary in the north to Strathpine and Brendale in the south and the Redcliffe peninsula in the east. Quotes are free. Phone {BIZ['phone_display']}, email {BIZ['email']}.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Business</dt><dd>{BIZ['name']}</dd></div>
+        <div><dt>Based in</dt><dd>{PUBLIC_ADDRESS}</dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:{BIZ['phone_e164']}">{BIZ['phone_display']}</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:{BIZ['email']}">{BIZ['email']}</a></dd></div>
+        <div><dt>Services</dt><dd>Lawn mowing · Acreage mowing · Garden maintenance · Hedge trimming · Lawn treatments &amp; weed control · Tree trimming</dd></div>
+        <div><dt>Property types</dt><dd>Residential, rentals, acreage, body corporate and commercial</dd></div>
+        <div><dt>Service area</dt><dd>22 suburbs across Moreton Bay and Brisbane's northside</dd></div>
+        <div><dt>Quotes</dt><dd>Free, confirmed before work starts</dd></div>
+        <div><dt>Hours</dt><dd>{TODO('opening hours')}</dd></div>
+        <div><dt>ABN</dt><dd>{TODO('ABN')}</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="which-service">
+  <div class="container">
+    <span class="eyebrow">Which service do I need?</span>
+    <h2>Match the problem to the service</h2>
+    <p class="lede">Not sure what to ask for? Find the description that sounds like your yard.</p>
+    <div class="table-wrap">
+      <table class="match-table">
+        <thead><tr><th scope="col">What you're seeing</th><th scope="col">Service to book</th><th scope="col">Typical frequency in Moreton Bay</th></tr></thead>
+        <tbody>{match_rows}</tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="container">
     <span class="eyebrow">Reviews</span>
     <h2>What customers say</h2>
@@ -626,6 +718,16 @@ def build_home():
 </section>
 
 {areas_section(green=True)}
+
+
+<section class="section section--alt" id="guide">
+  <div class="container">
+    <span class="eyebrow">Lawn care guide</span>
+    <h2>Straight answers about lawns in Moreton Bay</h2>
+    <p class="lede">Short, practical answers to the questions we get asked most, written for Deception Bay's climate and grass types.</p>
+    <div class="guide">{guide_items}</div>
+  </div>
+</section>
 
 <section class="section" id="faq">
   <div class="container">
@@ -640,8 +742,8 @@ def build_home():
     schema = [
         local_business(),
         {"@type": "WebSite", "@id": BIZ["domain"] + "/#website", "url": BIZ["domain"] + "/", "name": BIZ["short"], "publisher": {"@id": BIZ["domain"] + "/#business"}},
-        {"@type": "WebPage", "@id": BIZ["domain"] + "/#webpage", "url": BIZ["domain"] + "/", "name": "Lawn Mowing Deception Bay | Regal Lawns And Gardens", "isPartOf": {"@id": BIZ["domain"] + "/#website"}, "about": {"@id": BIZ["domain"] + "/#business"}},
-        faq_schema(HOME_FAQ),
+        {"@type": "WebPage", "@id": BIZ["domain"] + "/#webpage", "url": BIZ["domain"] + "/", "name": "Lawn Mowing Deception Bay | Regal Lawns And Gardens", "isPartOf": {"@id": BIZ["domain"] + "/#website"}, "about": {"@id": BIZ["domain"] + "/#business"}, "speakable": {"@type": "SpeakableSpecification", "cssSelector": [".glance__text", "#faq .faq"]}},
+        faq_schema(HOME_FAQ + HOME_GUIDE),
     ]
     return page(
         "/",
